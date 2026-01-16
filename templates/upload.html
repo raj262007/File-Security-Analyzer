@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="card shadow-lg border-0 rounded-4 animate__animated animate__fadeInDown">
+        
+        <!-- Header -->
+        <div class="card-header text-center text-white bg-gradient rounded-top-4">
+            <h3 class="mb-0">📂 Upload File</h3>
+            <small>Upload your file for security analysis</small>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body p-4 text-center">
+            
+            <form method="POST" enctype="multipart/form-data">
+
+                <!-- File Input -->
+                <div class="mb-4 upload-box">
+                    <i class="bi bi-cloud-arrow-up upload-icon"></i>
+                    <p class="text-muted mt-2">Choose a file to analyze</p>
+                    <input type="file" name="file" class="form-control mt-2" required>
+                </div>
+
+                <!-- Button -->
+                <button type="submit" class="btn btn-primary px-4 py-2 btn-animate">
+                    🔍 Upload & Analyze
+                </button>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-8">
+        
+        <!-- Welcome Hero Section -->
+        <div class="text-center mb-5 mt-4">
+            <h1 class="display-4 fw-bold text-primary mb-3">
+                Welcome back, {{ session.username }}!
+            </h1>
+            <p class="lead text-muted">
+                Protect your files with our intelligent security analyzer
+            </p>
+        </div>
+
+        <!-- Quick Actions Cards -->
+        <div class="row g-4 mb-5">
+            <!-- Upload Card -->
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm border-primary">
+                    <div class="card-body text-center p-5">
+                        <i class="bi bi-cloud-arrow-up display-1 text-primary mb-4"></i>
+                        <h3 class="card-title mb-3">Analyze New File</h3>
+                        <p class="text-muted mb-4">
+                            Upload PDF, DOCX, TXT, images, ZIP or even EXE files to check for potential risks.
+                        </p>
+                        <a href="{{ url_for('upload') }}" class="btn btn-primary btn-lg">
+                            Upload & Analyze →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Card -->
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm border-success">
+                    <div class="card-body text-center p-5">
+                        <i class="bi bi-clock-history display-1 text-success mb-4"></i>
+                        <h3 class="card-title mb-3">View Analysis History</h3>
+                        <p class="text-muted mb-4">
+                            See all your previous file scans, risk levels, and recommendations.
+                        </p>
+                        <a href="{{ url_for('history') }}" class="btn btn-outline-success btn-lg">
+                            View History →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features/Trust Section -->
+        <div class="card border-0 shadow-sm bg-light mt-4">
+            <div class="card-body p-5">
+                <h3 class="text-center mb-4">Why Use File Security Analyzer?</h3>
+                <div class="row text-center">
+                    <div class="col-md-4 mb-4">
+                        <i class="bi bi-shield-check-fill display-4 text-primary mb-3"></i>
+                        <h5>Advanced Risk Detection</h5>
+                        <p class="text-muted small">Keyword scanning, executable detection & size analysis</p>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <i class="bi bi-lock-fill display-4 text-primary mb-3"></i>
+                        <h5>Secure & Private</h5>
+                        <p class="text-muted small">Your files stay private and are stored per-user only</p>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <i class="bi bi-graph-up display-4 text-primary mb-3"></i>
+                        <h5>Clear Recommendations</h5>
+                        <p class="text-muted small">Simple Low/Medium/High risk levels with action advice</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
