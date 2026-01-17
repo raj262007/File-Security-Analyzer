@@ -3,38 +3,105 @@
 {% block content %}
 <div class="container mt-5">
 
-    <div class="card shadow-lg border-0 rounded-4 animate__animated animate__fadeInUp">
+    <div class="card border-0 shadow-lg rounded-4 animate__animated animate__fadeInUp">
 
         <!-- Header -->
-        <div class="card-header text-white bg-gradient rounded-top-4 text-center">
-            <h3 class="mb-0">👤 User Profile</h3>
-            <small>Manage your personal information</small>
+        <div class="card-header text-center text-white rounded-top-4"
+             style="background: linear-gradient(135deg, #667eea, #764ba2);">
+            <div class="d-flex flex-column align-items-center">
+                <!-- Avatar -->
+                <div class="rounded-circle bg-white text-primary fw-bold d-flex 
+                            align-items-center justify-content-center mb-2"
+                     style="width:90px;height:90px;font-size:32px;">
+                    {{ user.full_name[0]|upper if user.full_name else user.email[0]|upper }}
+                </div>
+
+                <h4 class="mb-0">{{ user.full_name or 'User Profile' }}</h4>
+                <small class="opacity-75">{{ user.email }}</small>
+            </div>
         </div>
 
         <!-- Body -->
         <div class="card-body p-4">
-            <div class="row align-items-center">
+            <div class="row g-4">
 
-               
-
-                <!-- Profile Info -->
-                <div class="col-md-8">
-                    <p><strong>Full Name:</strong> {{ user.full_name or 'Not set' }}</p>
-                    <p><strong>Email:</strong> {{ user.email }}</p>
-                    <p><strong>Phone:</strong> {{ user.phone or 'Not set' }}</p>
-                    <p><strong>Location:</strong> {{ user.location or 'Not set' }}</p>
-                    <p><strong>College:</strong> {{ user.college or 'Not set' }}</p>
-
-                    <a href="{{ url_for('edit_profile') }}"
-                       class="btn btn-secondary mt-3 btn-animate">
-                        ✏ Edit Profile
-                    </a>
+                <!-- Info Card -->
+                <div class="col-md-6">
+                    <div class="info-box">
+                        <i class="bi bi-person-fill"></i>
+                        <span>Full Name</span>
+                        <p>{{ user.full_name or 'Not set' }}</p>
+                    </div>
                 </div>
 
+                <div class="col-md-6">
+                    <div class="info-box">
+                        <i class="bi bi-telephone-fill"></i>
+                        <span>Phone</span>
+                        <p>{{ user.phone or 'Not set' }}</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="info-box">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>Location</span>
+                        <p>{{ user.location or 'Not set' }}</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="info-box">
+                        <i class="bi bi-mortarboard-fill"></i>
+                        <span>College</span>
+                        <p>{{ user.college or 'Not set' }}</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Action -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('edit_profile') }}"
+                   class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
+                    ✏ Edit Profile
+                </a>
             </div>
         </div>
 
     </div>
 
 </div>
+
+<!-- Custom Styles -->
+<style>
+.info-box{
+    background:#f8f9fa;
+    border-radius:16px;
+    padding:20px;
+    text-align:center;
+    height:100%;
+    transition:all .3s ease;
+}
+.info-box i{
+    font-size:28px;
+    color:#6f42c1;
+}
+.info-box span{
+    display:block;
+    font-size:14px;
+    color:#6c757d;
+    margin-top:6px;
+}
+.info-box p{
+    font-weight:600;
+    margin-top:4px;
+}
+.info-box:hover{
+    background:#fff;
+    transform:translateY(-5px);
+    box-shadow:0 10px 25px rgba(0,0,0,.1);
+}
+</style>
 {% endblock %}
+

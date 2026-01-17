@@ -1,27 +1,73 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h2>Edit Profile</h2>
-<form method="POST">
-    <div class="mb-3">
-        <label>Full Name</label>
-        <input type="text" name="full_name" class="form-control" value="{{ user.full_name or '' }}">
+<div class="container mt-5">
+
+    <div class="card border-0 shadow-lg rounded-4 animate__animated animate__fadeInUp">
+
+        <!-- Header -->
+        <div class="card-header text-white text-center rounded-top-4"
+             style="background: linear-gradient(135deg, #43cea2, #185a9d);">
+            <h4 class="mb-0">✏ Edit Profile</h4>
+            <small class="opacity-75">Update your personal information</small>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body p-4">
+
+            <form method="POST" class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="full_name"
+                           class="form-control rounded-pill"
+                           value="{{ user.full_name or '' }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Email (Read only)</label>
+                    <input type="email"
+                           class="form-control rounded-pill bg-light"
+                           value="{{ user.email }}" readonly>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Phone</label>
+                    <input type="text" name="phone"
+                           class="form-control rounded-pill"
+                           value="{{ user.phone or '' }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Location</label>
+                    <input type="text" name="location"
+                           class="form-control rounded-pill"
+                           value="{{ user.location or '' }}">
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label">College Name</label>
+                    <input type="text" name="college"
+                           class="form-control rounded-pill"
+                           value="{{ user.college or '' }}">
+                </div>
+
+                <!-- Actions -->
+                <div class="col-12 text-center mt-4">
+                    <button type="submit"
+                            class="btn btn-success px-4 py-2 rounded-pill shadow">
+                        💾 Save Changes
+                    </button>
+                    <a href="{{ url_for('profile') }}"
+                       class="btn btn-outline-secondary px-4 py-2 rounded-pill ms-2">
+                        ❌ Cancel
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
     </div>
-    <div class="mb-3">
-        <label>Email (Read-only)</label>
-        <input type="email" class="form-control" value="{{ user.email }}" readonly>
-    </div>
-    <div class="mb-3">
-        <label>Phone</label>
-        <input type="text" name="phone" class="form-control" value="{{ user.phone or '' }}">
-    </div>
-    <div class="mb-3">
-        <label>Location</label>
-        <input type="text" name="location" class="form-control" value="{{ user.location or '' }}">
-    </div>
-    <div class="mb-3">
-        <label>College Name</label>
-        <input type="text" name="college" class="form-control" value="{{ user.college or '' }}">
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-</form>
+
+</div>
 {% endblock %}
