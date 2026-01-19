@@ -10,7 +10,11 @@ import PyPDF2  # For PDF parsing
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "default_secret_key")
-app.config['UPLOAD_FOLDER'] = 'uploads'
+# Use /tmp for Vercel, or uploads locally
+if 'VERCEL' in os.environ:
+    app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
+else:
+    app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI", "mongodb://localhost:27017/fileproject")
 
