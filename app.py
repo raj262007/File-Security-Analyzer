@@ -20,6 +20,15 @@ app.config["MONGO_URI"] = os.environ.get("MONGO_URI", "mongodb://localhost:27017
 
 mongo = PyMongo(app)
 
+# Helper to get database (handles missing DB name in URI)
+def get_db():
+    try:
+        if mongo.db is not None:
+            return mongo.db
+    except Exception:
+        pass
+    return mongo.cx['fileproject']
+
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt', 'jpg', 'png', 'zip', 'exe'}
 
 # Ensure upload folder exists
@@ -63,10 +72,10 @@ def register():
         password_hash = generate_password_hash(password)
         
         # Check if user exists
-        existing_user = mongo.db.users.find_one({'$or': [{'username': username}, {'email': email}]})
+        existing_user = get_db().users.find_one({'$or': [{'username': username}, {'email': email}]})
         
         if existing_user is None:
-            mongo.db.users.insert_one({
+            get_db().users.insert_one({
                 'username': username,
                 'email': email,
                 'password_hash': password_hash,
@@ -88,7 +97,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
-        user = mongo.db.users.find_one({'username': username})
+        user = get_db().users.find_one({'username': username})
         
         if user and check_password_hash(user['password_hash'], password):
             session['user_id'] = str(user['_id'])
@@ -110,7 +119,7 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    user = mongo.db.users.find_one({'_id': ObjectId(session['user_id'])})
+    user = get_db().users.find_one({'_id': ObjectId(session['user_id'])})
     return render_template('profile.html', user=user)
 
 # Route: Edit Profile
@@ -123,7 +132,7 @@ def edit_profile():
         location = request.form['location']
         college = request.form['college']
         
-        mongo.db.users.update_one(
+        get_db().users.update_one(
             {'_id': ObjectId(session['user_id'])},
             {'$set': {
                 'full_name': full_name,
@@ -164,7 +173,7 @@ def upload():
             risk_level, recommendation = analyze_file(file_path, file_type)
             
             # Save to history
-            mongo.db.file_history.insert_one({
+            get_db().file_history.insert_one({
                 'user_id': session['user_id'],
                 'file_name': filename,
                 'file_type': file_type,
@@ -222,14 +231,14 @@ def analyze_file(file_path, file_type):
 @login_required
 def history():
     # Find all files for the user
-    files = list(mongo.db.file_history.find({'user_id': session['user_id']}).sort('upload_date', -1))
+    files = list(get_db().file_history.find({'user_id': session['user_id']}).sort('upload_date', -1))
     return render_template('history.html', files=files)
 
 # Route: Delete File
 @app.route('/delete/<file_id>')
 @login_required
 def delete(file_id):
-    file = mongo.db.file_history.find_one({'_id': ObjectId(file_id), 'user_id': session['user_id']})
+    file = get_db().file_history.find_one({'_id': ObjectId(file_id), 'user_id': session['user_id']})
     if file:
         # Delete from filesystem
         if os.path.exists(file['file_path']):
@@ -239,7 +248,7 @@ def delete(file_id):
                 print(f"Error deleting file {file['file_path']}: {e}")
                 
         # Delete from DB
-        mongo.db.file_history.delete_one({'_id': ObjectId(file_id)})
+        get_db().file_history.delete_one({'_id': ObjectId(file_id)})
         flash('File deleted successfully.')
     else:
         flash('File not found or unauthorized.')
