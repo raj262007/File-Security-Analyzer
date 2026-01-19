@@ -2,3 +2,6 @@ flask
 werkzeug
 python-docx
 PyPDF2
+flask-pymongo
+pymongo
+dnspython

@@ -1,55 +1,26 @@
 import os
-import sqlite3
 import datetime
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from flask_pymongo import PyMongo
+from bson.objectid import ObjectId
 import docx  # For DOCX parsing
 import PyPDF2  # For PDF parsing
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # Change this to a secure random key
+app.secret_key = os.environ.get("SECRET_KEY", "default_secret_key")
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+app.config["MONGO_URI"] = os.environ.get("MONGO_URI", "mongodb://localhost:27017/fileproject")
+
+mongo = PyMongo(app)
+
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt', 'jpg', 'png', 'zip', 'exe'}
 
 # Ensure upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
-
-# Database connection helper
-def get_db():
-    conn = sqlite3.connect('database.db')
-    conn.row_factory = sqlite3.Row
-    return conn
-
-# Create tables if not exist
-with get_db() as db:
-    db.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            full_name TEXT,
-            phone TEXT,
-            location TEXT,
-            college TEXT
-        )
-    ''')
-    db.execute('''
-        CREATE TABLE IF NOT EXISTS file_history (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            file_name TEXT NOT NULL,
-            file_type TEXT NOT NULL,
-            risk_level TEXT NOT NULL,
-            upload_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            file_path TEXT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users (id)
-        )
-    ''')
-    db.commit()
 
 # Helper: Check if file extension is allowed
 def allowed_file(filename):
@@ -78,17 +49,32 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        
+        # Check Passwords
+        if password != confirm_password:
+            flash('Passwords do not match.')
+            return redirect(url_for('register'))
+
         password_hash = generate_password_hash(password)
         
-        with get_db() as db:
-            try:
-                db.execute('INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)',
-                           (username, email, password_hash))
-                db.commit()
-                flash('Registration successful! Please log in.')
-                return redirect(url_for('login'))
-            except sqlite3.IntegrityError:
-                flash('Username or email already exists.')
+        # Check if user exists
+        existing_user = mongo.db.users.find_one({'$or': [{'username': username}, {'email': email}]})
+        
+        if existing_user is None:
+            mongo.db.users.insert_one({
+                'username': username,
+                'email': email,
+                'password_hash': password_hash,
+                'full_name': None,
+                'phone': None,
+                'location': None,
+                'college': None
+            })
+            flash('Registration successful! Please log in.')
+            return redirect(url_for('login'))
+        else:
+            flash('Username or email already exists.')
     return render_template('register.html')
 
 # Route: Login
@@ -98,15 +84,15 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
-        with get_db() as db:
-            user = db.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
-            if user and check_password_hash(user['password_hash'], password):
-                session['user_id'] = user['id']
-                session['username'] = user['username']
-                flash('Logged in successfully.')
-                return redirect(url_for('dashboard'))
-            else:
-                flash('Invalid username or password.')
+        user = mongo.db.users.find_one({'username': username})
+        
+        if user and check_password_hash(user['password_hash'], password):
+            session['user_id'] = str(user['_id'])
+            session['username'] = user['username']
+            flash('Logged in successfully.')
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Invalid username or password.')
     return render_template('login.html')
 
 # Route: Logout
@@ -120,8 +106,7 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    with get_db() as db:
-        user = db.execute('SELECT * FROM users WHERE id = ?', (session['user_id'],)).fetchone()
+    user = mongo.db.users.find_one({'_id': ObjectId(session['user_id'])})
     return render_template('profile.html', user=user)
 
 # Route: Edit Profile
@@ -134,17 +119,19 @@ def edit_profile():
         location = request.form['location']
         college = request.form['college']
         
-        with get_db() as db:
-            db.execute('''
-                UPDATE users SET full_name = ?, phone = ?, location = ?, college = ?
-                WHERE id = ?
-            ''', (full_name, phone, location, college, session['user_id']))
-            db.commit()
-            flash('Profile updated successfully.')
-            return redirect(url_for('profile'))
+        mongo.db.users.update_one(
+            {'_id': ObjectId(session['user_id'])},
+            {'$set': {
+                'full_name': full_name,
+                'phone': phone,
+                'location': location,
+                'college': college
+            }}
+        )
+        flash('Profile updated successfully.')
+        return redirect(url_for('profile'))
     
-    with get_db() as db:
-        user = db.execute('SELECT * FROM users WHERE id = ?', (session['user_id'],)).fetchone()
+    user = mongo.db.users.find_one({'_id': ObjectId(session['user_id'])})
     return render_template('edit_profile.html', user=user)
 
 # Route: File Upload
@@ -173,12 +160,14 @@ def upload():
             risk_level, recommendation = analyze_file(file_path, file_type)
             
             # Save to history
-            with get_db() as db:
-                db.execute('''
-                    INSERT INTO file_history (user_id, file_name, file_type, risk_level, file_path)
-                    VALUES (?, ?, ?, ?, ?)
-                ''', (session['user_id'], filename, file_type, risk_level, file_path))
-                db.commit()
+            mongo.db.file_history.insert_one({
+                'user_id': session['user_id'],
+                'file_name': filename,
+                'file_type': file_type,
+                'risk_level': risk_level,
+                'upload_date': datetime.datetime.utcnow(),
+                'file_path': file_path
+            })
             
             return render_template('result.html', filename=filename, file_type=file_type,
                                    risk_level=risk_level, recommendation=recommendation)
@@ -196,17 +185,20 @@ def analyze_file(file_path, file_type):
     suspicious_keywords = ['malware', 'virus', 'exploit', 'trojan']
     if file_type in {'txt', 'docx', 'pdf'}:
         text = ''
-        if file_type == 'txt':
-            with open(file_path, 'r', errors='ignore') as f:
-                text = f.read().lower()
-        elif file_type == 'docx':
-            doc = docx.Document(file_path)
-            text = ' '.join([para.text for para in doc.paragraphs]).lower()
-        elif file_type == 'pdf':
-            with open(file_path, 'rb') as f:
-                pdf = PyPDF2.PdfReader(f)
-                text = ' '.join([page.extract_text() for page in pdf.pages if page.extract_text()]).lower()
-        keywords_found = any(kw in text for kw in suspicious_keywords)
+        try:
+            if file_type == 'txt':
+                with open(file_path, 'r', errors='ignore') as f:
+                    text = f.read().lower()
+            elif file_type == 'docx':
+                doc = docx.Document(file_path)
+                text = ' '.join([para.text for para in doc.paragraphs]).lower()
+            elif file_type == 'pdf':
+                with open(file_path, 'rb') as f:
+                    pdf = PyPDF2.PdfReader(f)
+                    text = ' '.join([page.extract_text() for page in pdf.pages if page.extract_text()]).lower()
+            keywords_found = any(kw in text for kw in suspicious_keywords)
+        except Exception as e:
+            print(f"Error reading file {file_path}: {e}")
     
     # Determine risk
     if is_executable or keywords_found:
@@ -225,29 +217,28 @@ def analyze_file(file_path, file_type):
 @app.route('/history')
 @login_required
 def history():
-    with get_db() as db:
-        files = db.execute('''
-            SELECT * FROM file_history WHERE user_id = ? ORDER BY upload_date DESC
-        ''', (session['user_id'],)).fetchall()
+    # Find all files for the user
+    files = list(mongo.db.file_history.find({'user_id': session['user_id']}).sort('upload_date', -1))
     return render_template('history.html', files=files)
 
 # Route: Delete File
-@app.route('/delete/<int:file_id>')
+@app.route('/delete/<file_id>')
 @login_required
 def delete(file_id):
-    with get_db() as db:
-        file = db.execute('SELECT * FROM file_history WHERE id = ? AND user_id = ?',
-                          (file_id, session['user_id'])).fetchone()
-        if file:
-            # Delete from filesystem
-            if os.path.exists(file['file_path']):
+    file = mongo.db.file_history.find_one({'_id': ObjectId(file_id), 'user_id': session['user_id']})
+    if file:
+        # Delete from filesystem
+        if os.path.exists(file['file_path']):
+            try:
                 os.remove(file['file_path'])
-            # Delete from DB
-            db.execute('DELETE FROM file_history WHERE id = ?', (file_id,))
-            db.commit()
-            flash('File deleted successfully.')
-        else:
-            flash('File not found or unauthorized.')
+            except OSError as e:
+                print(f"Error deleting file {file['file_path']}: {e}")
+                
+        # Delete from DB
+        mongo.db.file_history.delete_one({'_id': ObjectId(file_id)})
+        flash('File deleted successfully.')
+    else:
+        flash('File not found or unauthorized.')
     return redirect(url_for('history'))
 
 if __name__ == '__main__':

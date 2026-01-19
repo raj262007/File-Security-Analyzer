@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <h2>Register</h2>
-<form method="POST">
+<form method="POST" id="registerForm">
     <div class="mb-3">
         <label>Username</label>
         <input type="text" name="username" class="form-control" required>
@@ -12,8 +12,29 @@
     </div>
     <div class="mb-3">
         <label>Password</label>
-        <input type="password" name="password" class="form-control" required>
+        <input type="password" name="password" id="password" class="form-control" required>
     </div>
+    <div class="mb-3">
+        <label>Confirm Password</label>
+        <input type="password" name="confirm_password" id="confirm_password" class="form-control" required>
+        <small id="passwordHelp" class="text-danger"></small>
+    </div>
+
     <button type="submit" class="btn btn-primary">Register</button>
 </form>
+
+<script>
+    document.getElementById('registerForm').onsubmit = function (e) {
+        var password = document.getElementById('password').value;
+        var confirm_password = document.getElementById('confirm_password').value;
+
+        if (password !== confirm_password) {
+            e.preventDefault();
+            document.getElementById('passwordHelp').innerText = 'Passwords do not match.';
+            return false;
+        }
+
+        return true;
+    };
+</script>
 {% endblock %}
