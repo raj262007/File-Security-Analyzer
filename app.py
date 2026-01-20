@@ -144,7 +144,7 @@ def edit_profile():
         flash('Profile updated successfully.')
         return redirect(url_for('profile'))
     
-    user = mongo.db.users.find_one({'_id': ObjectId(session['user_id'])})
+    user = get_db().users.find_one({'_id': ObjectId(session['user_id'])})
     return render_template('edit_profile.html', user=user)
 
 # Route: File Upload
