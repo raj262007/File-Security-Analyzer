@@ -1,77 +1,37 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="container vh-100 d-flex justify-content-center align-items-center">
-
-    <div class="card shadow-lg border-0 rounded-4 animate__animated animate__fadeInDown"
-         style="width: 380px;">
-
-        <!-- Header -->
-        <div class="card-header text-center text-white bg-gradient rounded-top-4">
-            <h3 class="mb-0">🔐 User Login</h3>
-            <small>Secure access to your dashboard</small>
+<div class="auth-card animate__animated animate__zoomIn">
+    <div class="text-center mb-4">
+        <div class="glass-morphism d-inline-block p-3 mb-3">
+            <i class="bi bi-shield-lock-fill fs-1 text-primary"></i>
         </div>
-
-        <!-- Body -->
-        <div class="card-body p-4">
-
-            <form method="POST">
-
-                <!-- Username -->
-                <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="bi bi-person"></i>
-                        </span>
-                        <input type="text" name="username"
-                               class="form-control"
-                               placeholder="Enter username"
-                               required>
-                    </div>
-                </div>
-
-                <!-- Password -->
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="bi bi-lock"></i>
-                        </span>
-                        <input type="password" name="password"
-                               class="form-control"
-                               placeholder="Enter password"
-                               required>
-                    </div>
-                </div>
-
-                <!-- Login Button -->
-                <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary btn-animate">
-                        🚀 Login
-                    </button>
-                </div>
-
-            </form>
-
-            <!-- Register Link -->
-            <div class="text-center mt-3">
-                <span class="text-muted">Don’t have an account?</span><br>
-                <a href="{{ url_for('register') }}" class="btn btn-outline-secondary mt-2">
-                    ✨ Register Here
-                </a>
-            </div>
-
-        </div>
-
-        <!-- Footer -->
-        <div class="card-footer text-center bg-light rounded-bottom-4">
-            <small class="text-muted">
-                © 2026 Secure File Analyzer
-            </small>
-        </div>
-
+        <h2 class="fw-bold">Welcome Back</h2>
+        <p class="text-secondary">Securely log in to analyze your files.</p>
     </div>
 
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Username</label>
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-person"></i></span>
+                <input type="text" name="username" class="form-control border-start-0" placeholder="Your username"
+                    required>
+            </div>
+        </div>
+        <div class="mb-4">
+            <label class="form-label fw-semibold">Password</label>
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-lock"></i></span>
+                <input type="password" name="password" class="form-control border-start-0" placeholder="Your password"
+                    required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2">Login</button>
+    </form>
+
+    <div class="text-center mt-4 pt-3 border-top">
+        <p class="text-secondary small">Don't have an account? <a href="{{ url_for('register') }}"
+                class="text-primary fw-bold text-decoration-none">Register</a></p>
+    </div>
 </div>
 {% endblock %}

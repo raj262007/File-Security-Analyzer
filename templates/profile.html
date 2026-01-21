@@ -1,107 +1,52 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="container mt-5">
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card p-0 animate__animated animate__zoomIn">
+            <div class="p-5 text-center bg-primary bg-opacity-10 border-bottom">
+                <div class="glass-morphism d-inline-block p-1 mb-3 rounded-circle" style="width: 120px; height: 120px;">
+                    <div
+                        class="rounded-circle bg-white w-100 h-100 d-flex align-items-center justify-content-center fw-bold fs-1 text-primary">
+                        {{ user.full_name[0]|upper if user.full_name else user.username[0]|upper }}
+                    </div>
+                </div>
+                <h2 class="fw-bold mb-1">{{ user.full_name or user.username }}</h2>
+                <p class="text-secondary mb-0">{{ user.email }}</p>
+            </div>
 
-    <div class="card border-0 shadow-lg rounded-4 animate__animated animate__fadeInUp">
-
-        <!-- Header -->
-        <div class="card-header text-center text-white rounded-top-4"
-             style="background: linear-gradient(135deg, #667eea, #764ba2);">
-            <div class="d-flex flex-column align-items-center">
-                <!-- Avatar -->
-                <div class="rounded-circle bg-white text-primary fw-bold d-flex 
-                            align-items-center justify-content-center mb-2"
-                     style="width:90px;height:90px;font-size:32px;">
-                    {{ user.full_name[0]|upper if user.full_name else user.email[0]|upper }}
+            <div class="p-5">
+                <div class="row g-4 mb-5">
+                    <div class="col-md-6">
+                        <div class="glass-morphism p-4 h-100">
+                            <p class="text-secondary small mb-2"><i class="bi bi-person-fill me-2"></i>Full Name</p>
+                            <p class="fw-bold mb-0 text-dark">{{ user.full_name or 'Not set' }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-morphism p-4 h-100">
+                            <p class="text-secondary small mb-2"><i class="bi bi-telephone-fill me-2"></i>Phone</p>
+                            <p class="fw-bold mb-0 text-dark">{{ user.phone or 'Not set' }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-morphism p-4 h-100">
+                            <p class="text-secondary small mb-2"><i class="bi bi-geo-alt-fill me-2"></i>Location</p>
+                            <p class="fw-bold mb-0 text-dark">{{ user.location or 'Not set' }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-morphism p-4 h-100">
+                            <p class="text-secondary small mb-2"><i class="bi bi-mortarboard-fill me-2"></i>College</p>
+                            <p class="fw-bold mb-0 text-dark">{{ user.college or 'Not set' }}</p>
+                        </div>
+                    </div>
                 </div>
 
-                <h4 class="mb-0">{{ user.full_name or 'User Profile' }}</h4>
-                <small class="opacity-75">{{ user.email }}</small>
+                <div class="text-center">
+                    <a href="{{ url_for('edit_profile') }}" class="btn btn-primary px-5 rounded-pill">Edit Profile</a>
+                </div>
             </div>
         </div>
-
-        <!-- Body -->
-        <div class="card-body p-4">
-            <div class="row g-4">
-
-                <!-- Info Card -->
-                <div class="col-md-6">
-                    <div class="info-box">
-                        <i class="bi bi-person-fill"></i>
-                        <span>Full Name</span>
-                        <p>{{ user.full_name or 'Not set' }}</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="info-box">
-                        <i class="bi bi-telephone-fill"></i>
-                        <span>Phone</span>
-                        <p>{{ user.phone or 'Not set' }}</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="info-box">
-                        <i class="bi bi-geo-alt-fill"></i>
-                        <span>Location</span>
-                        <p>{{ user.location or 'Not set' }}</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="info-box">
-                        <i class="bi bi-mortarboard-fill"></i>
-                        <span>College</span>
-                        <p>{{ user.college or 'Not set' }}</p>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Action -->
-            <div class="text-center mt-4">
-                <a href="{{ url_for('edit_profile') }}"
-                   class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
-                    ✏ Edit Profile
-                </a>
-            </div>
-        </div>
-
     </div>
-
 </div>
-
-<!-- Custom Styles -->
-<style>
-.info-box{
-    background:#f8f9fa;
-    border-radius:16px;
-    padding:20px;
-    text-align:center;
-    height:100%;
-    transition:all .3s ease;
-}
-.info-box i{
-    font-size:28px;
-    color:#6f42c1;
-}
-.info-box span{
-    display:block;
-    font-size:14px;
-    color:#6c757d;
-    margin-top:6px;
-}
-.info-box p{
-    font-weight:600;
-    margin-top:4px;
-}
-.info-box:hover{
-    background:#fff;
-    transform:translateY(-5px);
-    box-shadow:0 10px 25px rgba(0,0,0,.1);
-}
-</style>
 {% endblock %}
-

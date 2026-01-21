@@ -1,71 +1,70 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="container mt-5">
-
-    <div class="card shadow-lg border-0 rounded-4 animate__animated animate__fadeInUp">
-
-        <!-- Header -->
-        <div class="card-header text-white bg-gradient rounded-top-4 text-center">
-            <h3 class="mb-0">📜 File Analysis History</h3>
-            <small>Previously scanned files</small>
+<div class="card animate__animated animate__fadeIn">
+    <div class="p-4 border-bottom bg-primary bg-opacity-10 d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="fw-bold mb-0">Analysis History</h2>
+            <p class="text-secondary small mb-0">View all your previous file scans.</p>
         </div>
-
-        <!-- Body -->
-        <div class="card-body p-4">
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle text-center">
-                    <thead class="table-light">
-                        <tr>
-                            <th>📄 File Name</th>
-                            <th>🏷 Type</th>
-                            <th>🛡 Risk Level</th>
-                            <th>📅 Upload Date</th>
-                            <th>⚙ Action</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for file in files %}
-                        <tr class="history-row">
-                            <td>{{ file.file_name }}</td>
-                            <td>{{ file.file_type }}</td>
-
-                            <td>
-                                {% if file.risk_level == 'High' %}
-                                    <span class="badge bg-danger">🚨 High</span>
-                                {% elif file.risk_level == 'Medium' %}
-                                    <span class="badge bg-warning text-dark">⚠ Medium</span>
-                                {% else %}
-                                    <span class="badge bg-success">✅ Safe</span>
-                                {% endif %}
-                            </td>
-
-                            <td>{{ file.upload_date }}</td>
-
-                            <td>
-                                <a href="{{ url_for('delete', file_id=file.id) }}"
-                                   class="btn btn-danger btn-sm btn-animate"
-                                   onclick="return confirm('Are you sure you want to delete this record?')">
-                                    🗑 Delete
-                                </a>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="5" class="text-muted">
-                                No history found
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-
-                </table>
-            </div>
-
+        <div class="glass-morphism p-2">
+            <i class="bi bi-clock-history fs-3 text-primary"></i>
         </div>
     </div>
 
+    <div class="p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th class="ps-4">File Name</th>
+                        <th>Type</th>
+                        <th>Risk Level</th>
+                        <th>Scan Date</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for file in files %}
+                    <tr class="animate__animated animate__fadeInUp" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                        <td class="ps-4 fw-medium">{{ file.file_name }}</td>
+                        <td><span class="badge bg-light text-secondary text-uppercase">{{ file.file_type }}</span></td>
+                        <td>
+                            {% if file.risk_level == 'High' %}
+                            <span class="status-badge badge-high">High</span>
+                            {% elif file.risk_level == 'Medium' %}
+                            <span class="status-badge badge-medium">Medium</span>
+                            {% else %}
+                            <span class="status-badge badge-low">Safe</span>
+                            {% endif %}
+                        </td>
+                        <td class="small text-secondary">{{ file.upload_date.strftime('%Y-%m-%d %H:%M') if
+                            file.upload_date else 'N/A' }}</td>
+                        <td class="text-end pe-4">
+                            <a href="{{ url_for('delete', file_id=file._id) }}" class="text-danger"
+                                onclick="confirmDelete(event)">
+                                <i class="bi bi-trash3-fill"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="py-5 text-center text-secondary">
+                            <i class="bi bi-folder-x fs-1 d-block mb-3"></i>
+                            No scan history found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
+<script>
+    function confirmDelete(e) {
+        if (!confirm('Are you sure you want to delete this scan record?')) {
+            e.preventDefault();
+        }
+    }
+</script>
 {% endblock %}

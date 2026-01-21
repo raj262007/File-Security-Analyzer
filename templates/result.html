@@ -1,66 +1,54 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="container mt-5">
-
-    <!-- Result Card -->
-    <div class="card shadow-lg border-0 rounded-4 animate__animated animate__fadeInUp">
-        
-        <!-- Header -->
-        <div class="card-header text-center bg-gradient text-white rounded-top-4">
-            <h3 class="mb-0">🔍 File Security Analysis</h3>
-            <small>Detailed Scan Result</small>
-        </div>
-
-        <!-- Body -->
-        <div class="card-body p-4">
-            
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <p><i class="bi bi-file-earmark-text"></i>
-                        <strong> File Name:</strong><br>
-                        <span class="text-muted">{{ filename }}</span>
-                    </p>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-0 animate__animated animate__zoomIn">
+            <div class="p-5 text-center bg-primary bg-opacity-10 border-bottom">
+                <div class="glass-morphism d-inline-block p-3 mb-3">
+                    <i class="bi bi-shield-check-fill fs-1 text-primary"></i>
                 </div>
-
-                <div class="col-md-6">
-                    <p><i class="bi bi-tags"></i>
-                        <strong> File Type:</strong><br>
-                        <span class="text-muted">{{ file_type }}</span>
-                    </p>
-                </div>
+                <h2 class="fw-bold">Security Analysis Report</h2>
+                <p class="text-secondary small mb-0">Scan completed successfully.</p>
             </div>
 
-            <hr>
+            <div class="p-5">
+                <div class="row g-4 mb-5 text-center">
+                    <div class="col-6">
+                        <p class="text-secondary small mb-1">File Name</p>
+                        <p class="fw-bold mb-0">{{ filename }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="text-secondary small mb-1">File Type</p>
+                        <p class="fw-bold mb-0 text-uppercase">{{ file_type }}</p>
+                    </div>
+                </div>
 
-            <p>
-                <i class="bi bi-shield-exclamation"></i>
-                <strong> Risk Level:</strong>
-                {% if risk_level == 'High' %}
-                    <span class="badge bg-danger fs-6 ms-2">🚨 HIGH RISK</span>
-                {% elif risk_level == 'Medium' %}
-                    <span class="badge bg-warning text-dark fs-6 ms-2">⚠ MEDIUM RISK</span>
-                {% else %}
-                    <span class="badge bg-success fs-6 ms-2">✅ SAFE</span>
-                {% endif %}
-            </p>
+                <div class="glass-morphism p-4 text-center mb-5">
+                    <p class="text-secondary small mb-3">Overall Risk Level</p>
+                    {% if risk_level == 'High' %}
+                    <span class="status-badge badge-high fs-5 px-4 mb-3 d-inline-block">High Risk Detected</span>
+                    {% elif risk_level == 'Medium' %}
+                    <span class="status-badge badge-medium fs-5 px-4 mb-3 d-inline-block">Medium Risk Detected</span>
+                    {% else %}
+                    <span class="status-badge badge-low fs-5 px-4 mb-3 d-inline-block">File is Safe</span>
+                    {% endif %}
 
-            <p class="mt-3">
-                <i class="bi bi-lightbulb"></i>
-                <strong> Recommendation:</strong><br>
-                <span class="text-muted">{{ recommendation }}</span>
-            </p>
+                    <div class="mt-3 text-start bg-white bg-opacity-50 p-3 rounded-3">
+                        <p class="fw-bold mb-1 small"><i class="bi bi-info-circle me-2"></i>Recommendation</p>
+                        <p class="text-secondary mb-0 small">{{ recommendation }}</p>
+                    </div>
+                </div>
 
-        </div>
-
-        <!-- Footer Buttons -->
-        <div class="card-footer bg-light text-center rounded-bottom-4">
-            <a href="{{ url_for('history') }}" class="btn btn-outline-secondary me-2">
-                📜 View History
-            </a>
-            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
-                🏠 Dashboard
-            </a>
+                <div class="row g-3">
+                    <div class="col-6 text-center">
+                        <a href="{{ url_for('history') }}" class="btn btn-outline-primary w-100 rounded-pill">View
+                            History</a>
+                    </div>
+                    <div class="col-6 text-center">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary w-100 rounded-pill">Back to Home</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

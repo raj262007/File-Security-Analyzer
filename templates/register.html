@@ -1,27 +1,55 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Register</h2>
-<form method="POST" id="registerForm">
-    <div class="mb-3">
-        <label>Username</label>
-        <input type="text" name="username" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Email</label>
-        <input type="email" name="email" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Password</label>
-        <input type="password" name="password" id="password" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Confirm Password</label>
-        <input type="password" name="confirm_password" id="confirm_password" class="form-control" required>
-        <small id="passwordHelp" class="text-danger"></small>
+<div class="auth-card animate__animated animate__zoomIn">
+    <div class="text-center mb-4">
+        <div class="glass-morphism d-inline-block p-3 mb-3">
+            <i class="bi bi-person-plus-fill fs-1 text-primary"></i>
+        </div>
+        <h2 class="fw-bold">Create Account</h2>
+        <p class="text-secondary">Join us to start analyzing your files.</p>
     </div>
 
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
+    <form method="POST" id="registerForm">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Username</label>
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-person"></i></span>
+                <input type="text" name="username" class="form-control border-start-0" placeholder="Username" required>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Email</label>
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-envelope"></i></span>
+                <input type="email" name="email" class="form-control border-start-0" placeholder="Email address"
+                    required>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Password</label>
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-lock"></i></span>
+                <input type="password" name="password" id="password" class="form-control border-start-0"
+                    placeholder="Create password" required>
+            </div>
+        </div>
+        <div class="mb-4">
+            <label class="form-label fw-semibold">Confirm Password</label>
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-lock-check"></i></span>
+                <input type="password" name="confirm_password" id="confirm_password" class="form-control border-start-0"
+                    placeholder="Type again" required>
+            </div>
+            <small id="passwordHelp" class="text-danger mt-1 d-block"></small>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2">Create Account</button>
+    </form>
+
+    <div class="text-center mt-4 pt-3 border-top">
+        <p class="text-secondary small">Already have an account? <a href="{{ url_for('login') }}"
+                class="text-primary fw-bold text-decoration-none">Login</a></p>
+    </div>
+</div>
 
 <script>
     document.getElementById('registerForm').onsubmit = function (e) {

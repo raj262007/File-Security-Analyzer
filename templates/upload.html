@@ -1,37 +1,41 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="container mt-5">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-5 animate__animated animate__zoomIn">
+            <div class="text-center mb-5">
+                <div class="glass-morphism d-inline-block p-4 mb-3">
+                    <i class="bi bi-cloud-arrow-up-fill fs-1 text-primary pulse"></i>
+                </div>
+                <h2 class="fw-bold">Upload File for Analysis</h2>
+                <p class="text-secondary">Drag and drop or select a file to check for security risks.</p>
+            </div>
 
-    <div class="card shadow-lg border-0 rounded-4 animate__animated animate__fadeInDown">
-        
-        <!-- Header -->
-        <div class="card-header text-center text-white bg-gradient rounded-top-4">
-            <h3 class="mb-0">📂 Upload File</h3>
-            <small>Upload your file for security analysis</small>
-        </div>
-
-        <!-- Body -->
-        <div class="card-body p-4 text-center">
-            
             <form method="POST" enctype="multipart/form-data">
-
-                <!-- File Input -->
-                <div class="mb-4 upload-box">
-                    <i class="bi bi-cloud-arrow-up upload-icon"></i>
-                    <p class="text-muted mt-2">Choose a file to analyze</p>
-                    <input type="file" name="file" class="form-control mt-2" required>
+                <div class="upload-zone mb-4" onclick="document.getElementById('fileInput').click()">
+                    <i class="bi bi-file-earmark-arrow-up fs-2 text-primary d-block mb-3"></i>
+                    <span id="fileName" class="text-secondary fw-medium">Click here to browse files</span>
+                    <input type="file" name="file" id="fileInput" class="d-none" required
+                        onchange="updateFileName(this)">
                 </div>
 
-                <!-- Button -->
-                <button type="submit" class="btn btn-primary px-4 py-2 btn-animate">
-                    🔍 Upload & Analyze
-                </button>
-
+                <div class="d-grid mt-5">
+                    <button type="submit" class="btn btn-primary btn-lg">Start Analysis</button>
+                </div>
             </form>
+
+            <div class="mt-4 text-center">
+                <p class="small text-muted mb-0">Supported formats: PDF, DOCX, TXT, ZIP, EXE</p>
+                <p class="small text-muted">Max file size: 16MB</p>
+            </div>
         </div>
-
     </div>
-
 </div>
+
+<script>
+    function updateFileName(input) {
+        const fileName = input.files[0] ? input.files[0].name : "Click here to browse files";
+        document.getElementById('fileName').textContent = fileName;
+    }
+</script>
 {% endblock %}

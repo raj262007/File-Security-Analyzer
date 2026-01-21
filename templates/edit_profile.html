@@ -1,73 +1,53 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="container mt-5">
-
-    <div class="card border-0 shadow-lg rounded-4 animate__animated animate__fadeInUp">
-
-        <!-- Header -->
-        <div class="card-header text-white text-center rounded-top-4"
-             style="background: linear-gradient(135deg, #43cea2, #185a9d);">
-            <h4 class="mb-0">✏ Edit Profile</h4>
-            <small class="opacity-75">Update your personal information</small>
-        </div>
-
-        <!-- Body -->
-        <div class="card-body p-4">
-
-            <form method="POST" class="row g-3">
-
-                <div class="col-md-6">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" name="full_name"
-                           class="form-control rounded-pill"
-                           value="{{ user.full_name or '' }}">
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card p-0 animate__animated animate__zoomIn">
+            <div class="p-5 text-center bg-primary bg-opacity-10 border-bottom">
+                <div class="glass-morphism d-inline-block p-3 mb-3">
+                    <i class="bi bi-pencil-square fs-1 text-primary"></i>
                 </div>
+                <h2 class="fw-bold">Edit Profile</h2>
+                <p class="text-secondary small mb-0">Update your account details below.</p>
+            </div>
 
-                <div class="col-md-6">
-                    <label class="form-label">Email (Read only)</label>
-                    <input type="email"
-                           class="form-control rounded-pill bg-light"
-                           value="{{ user.email }}" readonly>
-                </div>
+            <div class="p-5">
+                <form method="POST">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Full Name</label>
+                            <input type="text" name="full_name" class="form-control" value="{{ user.full_name or '' }}"
+                                placeholder="Enter full name">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Phone</label>
+                            <input type="text" name="phone" class="form-control" value="{{ user.phone or '' }}"
+                                placeholder="Enter phone number">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Location</label>
+                            <input type="text" name="location" class="form-control" value="{{ user.location or '' }}"
+                                placeholder="Enter location">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">College</label>
+                            <input type="text" name="college" class="form-control" value="{{ user.college or '' }}"
+                                placeholder="Enter college name">
+                        </div>
+                    </div>
 
-                <div class="col-md-6">
-                    <label class="form-label">Phone</label>
-                    <input type="text" name="phone"
-                           class="form-control rounded-pill"
-                           value="{{ user.phone or '' }}">
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label">Location</label>
-                    <input type="text" name="location"
-                           class="form-control rounded-pill"
-                           value="{{ user.location or '' }}">
-                </div>
-
-                <div class="col-md-12">
-                    <label class="form-label">College Name</label>
-                    <input type="text" name="college"
-                           class="form-control rounded-pill"
-                           value="{{ user.college or '' }}">
-                </div>
-
-                <!-- Actions -->
-                <div class="col-12 text-center mt-4">
-                    <button type="submit"
-                            class="btn btn-success px-4 py-2 rounded-pill shadow">
-                        💾 Save Changes
-                    </button>
-                    <a href="{{ url_for('profile') }}"
-                       class="btn btn-outline-secondary px-4 py-2 rounded-pill ms-2">
-                        ❌ Cancel
-                    </a>
-                </div>
-
-            </form>
-
+                    <div class="row g-3 mt-5">
+                        <div class="col-6 text-center">
+                            <a href="{{ url_for('profile') }}"
+                                class="btn btn-outline-secondary w-100 rounded-pill">Cancel</a>
+                        </div>
+                        <div class="col-6 text-center">
+                            <button type="submit" class="btn btn-primary w-100 rounded-pill">Save Changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-
 </div>
 {% endblock %}
